@@ -13,10 +13,25 @@ def make_pretty(func):
     return inner
 
 
+def repeat(num_times):
+    def decorator_repeat(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = None
+            for _ in range(num_times):
+                result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator_repeat
+
+
 @make_pretty
+@repeat(3)
 def ordinary():
     print("I am ordinary")
 
+
+# ordinary = repeat(3)(ordinary)  # decorator_repeat(ordinary)
 
 @make_pretty
 def greet(name):
