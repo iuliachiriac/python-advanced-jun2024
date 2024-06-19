@@ -3,11 +3,30 @@ from datetime import date
 
 class Person:
     count = 0  # class attribute
+    MIN_YEAR = 1900
 
     def __init__(self, name, date_of_birth):
         self.name = name  # instance attribute
-        self.date_of_birth = date_of_birth
-        self.increment_count()
+        self._date_of_birth = date_of_birth
+        self._increment_count()
+
+    @property
+    def date_of_birth(self):
+        return self._date_of_birth
+
+    @date_of_birth.setter
+    def date_of_birth(self, value):
+        if value.year < self.MIN_YEAR:
+            raise ValueError("Invalid date.")
+        self._date_of_birth = value
+
+    @date_of_birth.deleter
+    def date_of_birth(self):
+        del self._date_of_birth
+
+    @property
+    def age(self):
+        return self.years_passed_since(self.date_of_birth)
 
     def __int__(self):
         return self.date_of_birth.year
@@ -25,11 +44,8 @@ class Person:
     def __le__(self, other):
         return self.date_of_birth >= other.date_of_birth
 
-    def get_age(self):
-        return self.years_passed_since(self.date_of_birth)
-
     @classmethod
-    def increment_count(cls):
+    def _increment_count(cls):
         cls.count += 1
 
     @staticmethod
@@ -63,13 +79,19 @@ if __name__ == "__main__":
     print(p1 > p2)
     print(p2 == p3)
 
-    print(p1.get_age())
-    print(Person.get_age(p1))
-
     print(p1.count is Person.count)
 
-    # p1.increment_count()
-    # Person.increment_count()
+    # Person._increment_count()
+    print(dir(Person))
     print("Person count:", Person.count)
 
     print(Person.years_passed_since(date(1918, 12, 1)))
+
+    print(p1.name, p1.date_of_birth)
+
+    try:
+        p1.date_of_birth = date(1846, 6, 1)
+    except ValueError as ex:
+        print(ex)
+
+    print(p1.age)
