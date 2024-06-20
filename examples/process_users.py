@@ -1,5 +1,15 @@
 import json
+import logging
 from pathlib import Path
+
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='example.log',
+                    filemode='w',
+                    encoding='utf-8',
+                    format="%(asctime)s %(name)s %(levelname)s - %(message)s",
+                    datefmt='%d/%m/%Y %I:%M:%S %p',
+                    level=logging.DEBUG)
 
 
 def get_users(filename, age_min=0, age_max=100):
@@ -33,6 +43,6 @@ if __name__ == "__main__":
         try:
             name, age = get_name_age(user)
         except ValueError as ex:
-            print(ex, user)
+            logger.error("Exception occurred", exc_info=True)
         else:
-            print(name, age)
+            logger.info("User name=%s, age=%d", name, age)
